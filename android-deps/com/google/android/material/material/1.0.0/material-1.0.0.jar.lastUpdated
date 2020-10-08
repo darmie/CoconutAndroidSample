@@ -1,0 +1,8 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Fri Oct 02 03:28:39 WAT 2020
+@default-temp-https\://mvnrepository.com/.lastUpdated=1601601139633
+https\://maven.google.com/.error=
+https\://mvnrepository.com/.error=Could not transfer artifact com.google.android.material\:material\:jar\:1.0.0 from/to temp (https\://mvnrepository.com)\: Authorization failed for https\://mvnrepository.com/com/google/android/material/material/1.0.0/material-1.0.0.jar 403 Forbidden
+https\://maven.google.com/.lastUpdated=1601605719126
+https\://repo.maven.apache.org/maven2/.lastUpdated=1601601117604
+https\://repo.maven.apache.org/maven2/.error=

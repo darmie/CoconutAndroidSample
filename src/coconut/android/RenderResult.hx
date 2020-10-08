@@ -1,0 +1,27 @@
+package coconut.android;
+
+import coconut.diffing.VNode;
+import android.view.View as AndroidView;
+import androidx.fragment.app.Fragment as AndroidFragment;
+import haxe.ds.Either;
+
+
+// typedef RenderResult = coconut.diffing.VNode<Dynamic>;
+@:pure
+abstract RenderResult(VNode<Dynamic>) to VNode<Dynamic> from VNode<Dynamic> {
+	inline function new(n) {
+		this = n;
+	}
+
+	@:from static function ofNode(n:AndroidView):RenderResult {
+		return VNativeInst(n);
+	}
+
+    @:from static function ofNode1(n:AndroidFragment):RenderResult {
+		return VNativeInst(n);
+	}
+
+	@:from static function ofView(v:View):RenderResult {
+		return VWidgetInst(v);
+	}
+}
