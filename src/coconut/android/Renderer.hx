@@ -46,8 +46,6 @@ private class AndroidViewCursor implements Cursor<Dynamic> {
 
 	public function insert(real:Dynamic):Bool {
 		if (Std.is(real, androidx.fragment.app.Fragment)) {
-			// if (!Std.is(container, AndroidViewGroup))
-			//   throw "Fragment parent must be a type of android.view.ViewGroup";
 			var manager = fragmentManager;
 			var inserted = real.isAdded();
 			var fragmentTransaction = manager.beginTransaction();
