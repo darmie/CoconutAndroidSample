@@ -147,6 +147,8 @@ private class AndroidViewBackend implements Applicator<Dynamic> {
 	});
 }
 
+
+
 class AndroidViewNodeType<Attr:{}, Real:{}> implements NodeType<Attr, Real> {
 	var factory:() -> Real;
 

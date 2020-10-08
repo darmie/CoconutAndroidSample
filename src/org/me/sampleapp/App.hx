@@ -29,13 +29,7 @@ class BaseFragment extends Fragment {
 class Text extends View {
 	@:attribute var children:String;
 
-	// @:attribute var _children:ObservableArray<String> = new ObservableArray<String>();
-
-	function viewDidMount() {
-		// _children.push(children);
-	}
-
-	function render()'<TextView text={_children} />';
+	function render() <TextView text={[children]} />;
 }
 
 class App extends View implements View_OnClickListener {
