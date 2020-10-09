@@ -2,7 +2,9 @@ package coconut.android;
 
 import android.content.Context;
 import android.view.ViewGroup as AndroidViewGroup;
+import android.view.View as AndroidView;
 import androidx.fragment.app.FragmentManager as AndroidFragmentManager;
+import androidx.fragment.app.Fragment as AndroidFragment;
 import coconut.diffing.*;
 import deepequal.custom.ArrayContains;
 import deepequal.DeepEqual.compare;
@@ -12,15 +14,15 @@ using StringTools;
 class Renderer {
 	static var DIFFER = new coconut.diffing.Differ(new AndroidViewBackend());
 
-	public static function mountInto(target:AndroidViewGroup, virtual:RenderResult) {
-		AndroidViewBackend.context = target.getContext();
+	public static function mountInto(target:AndroidView, virtual:RenderResult) {
+		AndroidViewBackend.context = target.getContext() != null ? target.getContext() : ApplicationDelegate.getInstance();
 		DIFFER.render([virtual], cast target);
 	}
 
-	static public function getNative(view:View):Null<Dynamic>
+	static public function getNative(view:View):Null<AndroidView>
 		return cast getAllNative(view)[0];
 
-	static public function getAllNative(view:View):Array<Dynamic>
+	static public function getAllNative(view:View):Array<AndroidView>
 		return switch @:privateAccess view._coco_lastRender {
 			case null: [];
 			case r: r.flatten(null);
@@ -34,7 +36,7 @@ class Renderer {
 	static public macro function mount(context:Context, target, markup);
 }
 
-private class AndroidViewCursor implements Cursor<Dynamic> {
+private class AndroidViewCursor implements Cursor<AndroidView> {
 	var pos:Int;
 	var container:AndroidViewGroup;
 	var fragmentManager = ApplicationDelegate.getInstance().getSupportFragmentManager();
@@ -44,40 +46,18 @@ private class AndroidViewCursor implements Cursor<Dynamic> {
 		this.pos = pos;
 	}
 
-	public function insert(real:Dynamic):Bool {
-		if (Std.is(real, androidx.fragment.app.Fragment)) {
-			var manager = fragmentManager;
-			var inserted = real.isAdded();
-			var fragmentTransaction = manager.beginTransaction();
-			var _container = container;
-			if (_container == null)
-				_container = ApplicationDelegate.mainView;
-			fragmentTransaction.add(_container.getId(), real);
-			fragmentTransaction.commit();
-			return inserted;
-		}
-
-		if (container != null && Std.is(real, android.view.View)) {
-			var inserted = real.getParent() != container;
-			real.setId(pos);
-			container.addView(real, pos);
-			return inserted;
-		}
-
-		return false;
+	public function insert(real:AndroidView):Bool {
+		var inserted = real.getParent() != container;
+		real.setId(pos++);
+		var v:android.view.View = cast real;
+		container.addView(real);
+		return inserted;
 	}
 
 	public function delete():Bool {
 		if (container != null && pos <= container.getChildCount()) {
 			container.removeViewAt(pos);
-			return true;
-		}
-		var manager = fragmentManager;
-		if (manager.findFragmentById(pos) != null) {
-			var f = manager.findFragmentById(pos);
-			var fragmentTransaction = manager.beginTransaction();
-			fragmentTransaction.remove(f);
-			fragmentTransaction.commit();
+			container.invalidate();
 			return true;
 		}
 		return false;
@@ -86,68 +66,47 @@ private class AndroidViewCursor implements Cursor<Dynamic> {
 	public function step():Bool
 		return if (pos >= container.getChildCount()) false; else ++pos == container.getChildCount();
 
-	public function current():Dynamic {
-		var manager = fragmentManager;
-		if (container != null && container.getChildAt(pos) != null)
-			return cast container.getChildAt(pos);
-		if (manager.findFragmentById(pos) != null)
-			return cast manager.findFragmentById(pos);
-		return null;
-	}
+	public function current():AndroidView
+		return container.getChildAt(pos);
 }
 
-private class AndroidViewBackend implements Applicator<Dynamic> {
+private class AndroidViewBackend implements Applicator<AndroidView> {
 	public static var context:Context;
+
+	var counter:Int = 0;
 
 	public function new() {}
 
-	var registry:Map<java.lang.Object, Rendered<Dynamic>> = new Map();
+	var registry:Map<AndroidView, Rendered<AndroidView>> = new Map();
 
-	public function unsetLastRender(target:Dynamic):Rendered<Dynamic> {
+	public function unsetLastRender(target:AndroidView):Rendered<AndroidView> {
 		var ret = registry[cast target];
 		registry.remove(target);
 		return ret;
 	}
 
-	public function setLastRender(target:Dynamic, r:Rendered<Dynamic>):Void
+	public function setLastRender(target:AndroidView, r:Rendered<AndroidView>):Void
 		registry[target] = r;
 
-	public function getLastRender(target:Dynamic):Null<Rendered<Dynamic>>
+	public function getLastRender(target:AndroidView):Null<Rendered<AndroidView>>
 		return registry[target];
 
-	public function traverseSiblings(target:Dynamic):Cursor<Dynamic> {
-		if (Std.is(target, android.view.View))
-			return new AndroidViewCursor(cast target.getParent(), cast(target.getParent(), AndroidViewGroup).indexOfChild(target));
-		if (Std.is(target, androidx.fragment.app.Fragment))
-			return new AndroidViewCursor(cast ApplicationDelegate.mainView, target.getId());
-		return null;
-	}
+	public function traverseSiblings(target:AndroidView):Cursor<AndroidView>
+		return new AndroidViewCursor(cast target.getParent(), cast(target.getParent(), AndroidViewGroup).indexOfChild(target));
 
-	public function traverseChildren(target:Dynamic):Cursor<Dynamic> {
-		if (target.getId() == -1) {
-			target.setId(ApplicationDelegate.mainView.getId());
-		}
-		if (Std.is(target, android.view.View))
-			return new AndroidViewCursor(cast target, 0);
-		if (Std.is(target, androidx.fragment.app.Fragment))
-			return new AndroidViewCursor(cast target.getView(), 0);
+	public function traverseChildren(target:AndroidView):Cursor<AndroidView> return new AndroidViewCursor(cast target, 0);
 
-		return null;
-	}
-
-	public function placeholder(forTarget:Widget<Dynamic>):VNode<Dynamic>
+	public function placeholder(forTarget:Widget<AndroidView>):VNode<AndroidView>
 		return VNode.native(cast PLACEHOLDER, null, null, null, null);
 
 	static final PLACEHOLDER = new coconut.android.AndroidViewNodeType(() -> {
 		var target = new android.view.ViewGroup(ApplicationDelegate.getInstance());
-		target.setId(ApplicationDelegate.mainView.getId() + 1);
+		target.setId(ApplicationDelegate.mainView.getId() - 1);
 		return target;
 	});
 }
 
-
-
-class AndroidViewNodeType<Attr:{}, Real:{}> implements NodeType<Attr, Real> {
+class AndroidViewNodeType<Attr:{}, Real:AndroidView> implements NodeType<Attr, Real> {
 	var factory:() -> Real;
 
 	public function new(view) {
@@ -170,42 +129,49 @@ class AndroidViewNodeType<Attr:{}, Real:{}> implements NodeType<Attr, Real> {
 
 			if (m.getName() == mName) {
 				var _params:java.NativeArray<java.lang.Object> = new java.NativeArray(args.length);
-				var aType = cast(args[0], java.lang.Object).getClass();
+				var i = 0;
 				var found = false;
-
-				// Check types or interfaces against similar primitive Java types
-				if (aType == java.lang.Class.forName("java.lang.String")) {
-					switch java.util.Arrays.asList(m.getParameterTypes()).get(0).toString() {
-						case "interface java.lang.CharSequence" | "class java.lang.String":
-							{
-								found = m.getParameterCount() == args.length;
-							}
-						case _:
-							found = false;
+				for (arg in args) {
+					var aType = cast(arg, java.lang.Object).getClass();
+					// Check types or interfaces against similar primitive Java types
+					if (aType == java.lang.Class.forName("java.lang.String")) {
+						switch java.util.Arrays.asList(m.getParameterTypes()).get(i).toString() {
+							case "interface java.lang.CharSequence" | "class java.lang.String":
+								{
+									found = m.getParameterCount() == args.length;
+								}
+							case _:
+								found = false;
+						}
+					} else if (aType == java.lang.Class.forName("java.lang.Integer")) {
+						found = m.getParameterCount() == args.length
+							&& java.util.Arrays.asList(m.getParameterTypes()).get(i).toString() == "int";
+					} else if (aType == java.lang.Class.forName("java.lang.Double")) {
+						found = m.getParameterCount() == args.length
+							&& java.util.Arrays.asList(m.getParameterTypes()).get(i).toString() == "float";
+						if (found)
+							arg = java.lang.Float.fromFloat(arg); // = java.util.Arrays.asList(m.getParameterTypes()).get(i)._cast(arg);
+					} else if (aType.toString().contains("$")) {
+						found = m.getParameterCount() == args.length
+							&& java.util.Arrays.asList(m.getParameterTypes()).get(i).toString() == "class haxe.jvm.Function";
+						if (!found) {
+							found = m.getParameterCount() == args.length && java.util.Arrays.asList(m.getParameterTypes()).contains(aType);
+						}
+					} else {
+						if (m.getParameterCount() == args.length
+							&& java.util.Arrays.asList(m.getParameterTypes()).get(i).toString().startsWith("interface")) {
+							// wild guess that developer knows what they are doing.
+							found = true;
+						} else if (m.getParameterCount() == args.length
+							&& java.util.Arrays.asList(m.getParameterTypes()).contains(aType)) {
+							found = true;
+						}
 					}
-				} else if (aType == java.lang.Class.forName("java.lang.Integer")) {
-					found = m.getParameterCount() == args.length
-						&& java.util.Arrays.asList(m.getParameterTypes()).get(0).toString() == "int";
-				} else if (aType.toString().contains("$")) {
-					found = m.getParameterCount() == args.length
-						&& java.util.Arrays.asList(m.getParameterTypes()).get(0).toString() == "class haxe.jvm.Function";
-				} else {
-					if (m.getParameterCount() == args.length
-						&& java.util.Arrays.asList(m.getParameterTypes()).get(0).toString().startsWith("interface")) {
-						// wild guess that developer knows what they are doing.
-						found = true;
-					} else if (m.getParameterCount() == args.length && java.util.Arrays.asList(m.getParameterTypes()).contains(aType)) {
-						found = true;
-					}
+					_params[i] = arg;
+					// trace(mName, aType, found, java.util.Arrays.asList(m.getParameterTypes()).get(i));
 				}
 
-				// trace(mName, aType, found, java.util.Arrays.asList(m.getParameterTypes()).get(0));
 				if (found) {
-					var i = 0;
-					for (a in args) {
-						_params[i] = cast a;
-					}
-
 					m.invoke(_contextObj, _params);
 					break;
 				}
@@ -214,12 +180,12 @@ class AndroidViewNodeType<Attr:{}, Real:{}> implements NodeType<Attr, Real> {
 	}
 
 	inline function set(target, prop, val, old) {
-		try{
+		try {
 			if (Std.is(val, Array)) {
 				var args:Array<Dynamic> = cast val;
 				var oldArgs:Array<Dynamic> = cast old;
 				var older = new ArrayContains(oldArgs);
-	
+
 				if (oldArgs != null && args.length == oldArgs.length) {
 					switch compare(older, args) {
 						case Success(_): // do nothing
@@ -234,7 +200,7 @@ class AndroidViewNodeType<Attr:{}, Real:{}> implements NodeType<Attr, Real> {
 					refresh(target, prop, cast val, cast old);
 				}
 			}
-		}catch(e:java.lang.reflect.InvocationTargetException){
+		} catch (e:java.lang.reflect.InvocationTargetException) {
 			Sys.println(e.getTargetException().getMessage());
 			throw e;
 		}

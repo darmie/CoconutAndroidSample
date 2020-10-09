@@ -20,8 +20,8 @@ class Setup {
 		var cl = Context.getType('android.view.View').getClass();
     cl.meta.add(':autoBuild', [macro @:pos(cl.pos) coconut.android.macros.Setup.hxxAugment()], cl.pos);
     
-    var cl1 = Context.getType('androidx.fragment.app.Fragment').getClass();
-		cl1.meta.add(':autoBuild', [macro @:pos(cl.pos) coconut.android.macros.Setup.hxxAugment1()], cl.pos);
+    // var cl1 = Context.getType('androidx.fragment.app.Fragment').getClass();
+		// cl1.meta.add(':autoBuild', [macro @:pos(cl.pos) coconut.android.macros.Setup.hxxAugment1()], cl.pos);
 	}
 
 	static function hxxAugment() {

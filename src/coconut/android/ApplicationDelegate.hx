@@ -6,27 +6,38 @@ import android.widget.LinearLayout;
 import coconut.diffing.*;
 import coconut.ui.*;
 import android.view.Gravity;
-
-
+import android.view.ViewGroup.ViewGroup_LayoutParams;
+import android.util.DisplayMetrics;
 import org.me.sampleapp.App;
+import coconut.android.Isolated;
+
+using coconut.android.Util;
 
 class ApplicationDelegate extends FragmentActivity {
-    static var instance:ApplicationDelegate;
+	static var instance:ApplicationDelegate;
 
-    public static var mainView:LinearLayout;
+	public static var mainView:LinearLayout;
 
-    public static function getInstance(){
-        return instance;
-    }
+	public static function getInstance() {
+		return instance;
+	}
 
-    @:overload override public function onCreate(savedInstanceState:Bundle){
-        super.onCreate(savedInstanceState);
+	@:overload override public function onCreate(savedInstanceState:Bundle) {
+		super.onCreate(savedInstanceState);
         instance = this;
-        mainView = new LinearLayout(this); 
+
+        var displayMetrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+		var height = displayMetrics.heightPixels;
+        var width = displayMetrics.widthPixels;
+
+        mainView = new LinearLayout(this);
         mainView.setId(1);
         mainView.setTag("CoconutAndroidMain");
-        Renderer.mount(mainView, '<App gravity={Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL} />');
-        mainView.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL);
+        mainView.setLayoutParams(new ViewGroup_LayoutParams(width, height));
+        var G = Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL;
+        mainView.setGravity(G);
+        Renderer.mount(mainView, <Isolated><App gravity = {G} /></Isolated>);
         setContentView(mainView);
-    }
+	}
 }

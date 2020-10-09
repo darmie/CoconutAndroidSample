@@ -1,8 +1,9 @@
 package org.me.sampleapp;
 
 import android.view.View.View_OnClickListener;
-import android.widget.Button;
+import com.google.android.material.button.MaterialButton as Button;
 import android.widget.LinearLayout;
+import android.view.ViewGroup.ViewGroup_LayoutParams;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.view.Gravity;
@@ -11,20 +12,12 @@ import android.view.ViewGroup;
 import coconut.android.ApplicationDelegate;
 import android.view.LayoutInflater;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import tink.state.*;
 import coconut.ui.*;
 import tink.core.*;
-
-class BaseFragment extends Fragment {
-	@:overload override public function onCreateView(inflater:LayoutInflater, container:ViewGroup, bundle:Bundle) {
-		var layout = new LinearLayout(ApplicationDelegate.getInstance());
-		return layout;
-	}
-}
 
 class Text extends View {
 	@:attribute var children:String;
@@ -34,20 +27,21 @@ class Text extends View {
 
 class App extends View implements View_OnClickListener {
 	@:attribute var gravity:Int = Gravity.CENTER_HORIZONTAL;
-
 	@:ref var btn:Button;
-	@:ref var txt:TextView;
-
 	var counter:Int = 0;
 	@:state var counterString:String = '$counter';
 
-	var gdDefault:GradientDrawable = new GradientDrawable();
+	@:ref var mainLayout:LinearLayout;
 
-	function viewDidMount() {
-		gdDefault.setColor(0xFFFF0000);
-		gdDefault.setCornerRadius(120);
-		gdDefault.setStroke(1, 0xFFFF0000);
-		btn.setBackground(gdDefault);
+	@:keep function viewDidMount(){
+		// var params = mainLayout.getLayoutParams();
+		// var parent = cast(mainLayout.getParent(), LinearLayout).getLayoutParams();
+		// params.width = parent.width;
+		// params.height = parent.height;
+		// mainLayout.setLayoutParams(params);
+		mainLayout.invalidate();
+		// var _params = mainLayout.getLayoutParams();
+		
 	}
 
 	@:keep public function onClick(v:android.view.View) {
@@ -57,26 +51,19 @@ class App extends View implements View_OnClickListener {
 		counterString = '${counter}';
 	}
 
-	@:keep public function detailFragmentInit(f:DetailFragment, v:android.view.View) {
-		cast(v, Button).setText("frag!");
-	}
-
 	function render()
-			<LinearLayout gravity={[gravity]}>
-				<BaseFragment>
-					<DetailFragment init={detailFragmentInit} />
-				</BaseFragment>
-				<Button 
-					ref=${btn}
-					background={[${gdDefault}]}
-					backgroundTintList={[ColorStateList.valueOf(0xFFFF0000)]} 
-					textColor={[Color.parseColor("#ffffff")]} 
-					text={["Click Me!"]}  
-					width={[200]}
-					height={[200]}
-					onClickListener={[this]}
-				/>
-				<Text>${counterString}</Text>
-			</LinearLayout>
+				<LinearLayout ref=${mainLayout} layoutParams={[new ViewGroup_LayoutParams(ViewGroup_LayoutParams.MATCH_PARENT, ViewGroup_LayoutParams.MATCH_PARENT)]} orientation={[LinearLayout.VERTICAL]}  gravity={[gravity]}>
+					<Button 
+						ref=${btn}
+						backgroundTintList={[ColorStateList.valueOf(0xFFFF0000)]} 
+						cornerRadius={[40]}
+						textColor={[Color.parseColor("#ffffff")]} 
+						text={["Click Me!"]}  
+						layoutParams={[new ViewGroup_LayoutParams(400, 400)]}
+						elevation={[50.0]}
+						onClickListener={[this]}
+					/>
+					<Text>${counterString}</Text>
+				</LinearLayout>
 		;
 }
