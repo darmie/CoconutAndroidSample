@@ -26,23 +26,12 @@ class Text extends View {
 }
 
 class App extends View implements View_OnClickListener {
-	@:attribute var gravity:Int = Gravity.CENTER_HORIZONTAL;
+	// @:attribute var gravity:Int = Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL;
 	@:ref var btn:Button;
 	var counter:Int = 0;
 	@:state var counterString:String = '$counter';
 
 	@:ref var mainLayout:LinearLayout;
-
-	@:keep function viewDidMount(){
-		// var params = mainLayout.getLayoutParams();
-		// var parent = cast(mainLayout.getParent(), LinearLayout).getLayoutParams();
-		// params.width = parent.width;
-		// params.height = parent.height;
-		// mainLayout.setLayoutParams(params);
-		mainLayout.invalidate();
-		// var _params = mainLayout.getLayoutParams();
-		
-	}
 
 	@:keep public function onClick(v:android.view.View) {
 		// trace("Button Trigger!!!");
@@ -52,7 +41,7 @@ class App extends View implements View_OnClickListener {
 	}
 
 	function render()
-				<LinearLayout ref=${mainLayout} layoutParams={[new ViewGroup_LayoutParams(ViewGroup_LayoutParams.MATCH_PARENT, ViewGroup_LayoutParams.MATCH_PARENT)]} orientation={[LinearLayout.VERTICAL]}  gravity={[gravity]}>
+				<LinearLayout ref=${mainLayout} layoutParams={[new ViewGroup_LayoutParams(ViewGroup_LayoutParams.MATCH_PARENT, ViewGroup_LayoutParams.MATCH_PARENT)]} orientation={[LinearLayout.VERTICAL]}  gravity={[Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL]}>
 					<Button 
 						ref=${btn}
 						backgroundTintList={[ColorStateList.valueOf(0xFFFF0000)]} 

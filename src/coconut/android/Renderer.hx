@@ -17,6 +17,7 @@ class Renderer {
 	public static function mountInto(target:AndroidView, virtual:RenderResult) {
 		AndroidViewBackend.context = target.getContext() != null ? target.getContext() : ApplicationDelegate.getInstance();
 		DIFFER.render([virtual], cast target);
+		trace('[MOUNTED]: $target');
 	}
 
 	static public function getNative(view:View):Null<AndroidView>
@@ -48,8 +49,6 @@ private class AndroidViewCursor implements Cursor<AndroidView> {
 
 	public function insert(real:AndroidView):Bool {
 		var inserted = real.getParent() != container;
-		real.setId(pos++);
-		var v:android.view.View = cast real;
 		container.addView(real);
 		return inserted;
 	}
@@ -101,7 +100,7 @@ private class AndroidViewBackend implements Applicator<AndroidView> {
 
 	static final PLACEHOLDER = new coconut.android.AndroidViewNodeType(() -> {
 		var target = new android.view.ViewGroup(ApplicationDelegate.getInstance());
-		target.setId(ApplicationDelegate.mainView.getId() - 1);
+
 		return target;
 	});
 }

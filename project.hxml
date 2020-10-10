@@ -13,6 +13,8 @@
 
 --macro coconut.android.macros.Setup.all()
 
+-D coco_android_debug=1
+
 --jvm coco.android/app/bin/libcoco.jar
 --java-lib-extern /Volumes/Vibranium/Users/damilare/Library/Android/sdk/platforms/android-29/android.jar
 --java-lib-extern /Volumes/Vibranium/Workspace/Zenturi/project/coco.cli/SampleApp/android-deps/androidx/appcompat/appcompat/1.0.2/appcompat-1.0.2.jar
@@ -59,3 +61,10 @@
 --java-lib-extern /Volumes/Vibranium/Workspace/Zenturi/project/coco.cli/SampleApp/android-deps/androidx/navigation/navigation-common/2.0.0/navigation-common-2.0.0.jar
 --java-lib-extern /Volumes/Vibranium/Workspace/Zenturi/project/coco.cli/SampleApp/android-deps/androidx/navigation/navigation-ui/2.0.0/navigation-ui-2.0.0.jar
 --java-lib-extern /Volumes/Vibranium/Workspace/Zenturi/project/coco.cli/SampleApp/android-deps/androidx/appcompat/appcompat/1.0.2/appcompat-1.0.2.jar
+--java-lib-extern /Volumes/Vibranium/Workspace/Zenturi/project/coco.cli/SampleApp/android-deps/com/github/nkzawa/socket.io-client/0.6.0/socket.io-client-0.6.0.jar
+--java-lib-extern /Volumes/Vibranium/Workspace/Zenturi/project/coco.cli/SampleApp/android-deps/io/socket/socket.io-client/1.0.0/socket.io-client-1.0.0.jar
+--java-lib-extern /Volumes/Vibranium/Workspace/Zenturi/project/coco.cli/SampleApp/android-deps/io/socket/engine.io-client/1.0.0/engine.io-client-1.0.0.jar
+--java-lib-extern /Volumes/Vibranium/Workspace/Zenturi/project/coco.cli/SampleApp/android-deps/io/socket/engine.io-client/1.0.0/engine.io-client-1.0.0.jar
+--java-lib-extern /Volumes/Vibranium/Workspace/Zenturi/project/coco.cli/SampleApp/android-deps/com/squareup/okhttp3/okhttp/3.8.1/okhttp-3.8.1.jar
+--java-lib-extern /Volumes/Vibranium/Workspace/Zenturi/project/coco.cli/SampleApp/android-deps/com/squareup/okio/okio/1.13.0/okio-1.13.0.jar
+--java-lib-extern /Volumes/Vibranium/Workspace/Zenturi/project/coco.cli/SampleApp/android-deps/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar

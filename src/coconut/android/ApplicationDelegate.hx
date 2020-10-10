@@ -8,15 +8,15 @@ import coconut.ui.*;
 import android.view.Gravity;
 import android.view.ViewGroup.ViewGroup_LayoutParams;
 import android.util.DisplayMetrics;
-import org.me.sampleapp.App;
 import coconut.android.Isolated;
-
 using coconut.android.Util;
 
-class ApplicationDelegate extends FragmentActivity {
-	static var instance:ApplicationDelegate;
 
-	public static var mainView:LinearLayout;
+
+class ApplicationDelegate extends FragmentActivity {
+	public static var instance:ApplicationDelegate;
+
+	public var mainView:LinearLayout;
 
 	public static function getInstance() {
 		return instance;
@@ -37,7 +37,12 @@ class ApplicationDelegate extends FragmentActivity {
         mainView.setLayoutParams(new ViewGroup_LayoutParams(width, height));
         var G = Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL;
         mainView.setGravity(G);
-        Renderer.mount(mainView, <Isolated><App gravity = {G} /></Isolated>);
+        #if (coco_android_debug==1)
         setContentView(mainView);
+        var fragmentManager = getSupportFragmentManager();
+        var trans = fragmentManager.beginTransaction();
+        trans.add(mainView.getId(), new HostFragment());
+        trans.commit();
+        #end
 	}
 }
