@@ -2,6 +2,7 @@
   "name": "sampleapp",
   "version": "0.0.1",
   "scripts": {
+    "start": "node watcher.js",
     "haxe": "haxe",
     "neko": "neko",
     "postinstall": "lix download",
@@ -10,5 +11,10 @@
   },
   "devDependencies": {
     "lix": "^15.9.0"
+  },
+  "dependencies": {
+    "chokidar": "^3.4.2",
+    "express": "^4.15.2",
+    "socket.io": "^2.3.0"
   }
 }
