@@ -4,6 +4,7 @@
 
 -main org.me.sampleapp.AppActivity
 
+
 --dce no
 org.me.sampleapp.AppLauncher
 coconut.diffing.Differ
@@ -14,6 +15,8 @@ coconut.diffing.Differ
 -lib tink_state
 -lib tink_core
 -lib deep_equal
+
+
 
 --macro coconut.android.macros.Setup.all()
 

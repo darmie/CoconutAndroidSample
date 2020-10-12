@@ -43,11 +43,11 @@ class App extends View implements View_OnClickListener {
 	function render()
 				'<LinearLayout ref=${mainLayout} layoutParams={[new ViewGroup_LayoutParams(ViewGroup_LayoutParams.MATCH_PARENT, ViewGroup_LayoutParams.MATCH_PARENT)]} orientation={[LinearLayout.VERTICAL]}  gravity={[Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL]}>
 					<Button 
-						ref=${btn}
+						ref=${btn} 
 						backgroundTintList={[ColorStateList.valueOf(Color.parseColor("#20B2AA"))]} 
-						cornerRadius={[400]}
+						cornerRadius={[40]}
 						textColor={[Color.parseColor("#f3f3f3")]} 
-						text={["Click Me!"]}  
+						text={["COUNTER!!"]}  
 						layoutParams={[new ViewGroup_LayoutParams(400, 400)]}
 						elevation={[50.0]}
 						onClickListener={[this]}
