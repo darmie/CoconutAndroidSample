@@ -1,8 +1,12 @@
 -cp src
 
 
--dce full
+
 -main org.me.sampleapp.AppActivity
+
+--dce no
+org.me.sampleapp.AppLauncher
+coconut.diffing.Differ
 
 -lib coconut.diffing
 -lib coconut.ui

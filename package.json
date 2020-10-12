@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "start": "node watcher.js",
+    "build": "haxe project.hxml && cd ./coco.android &&  ./gradlew buildDebug && ./gradlew installDebug && cd ..",
     "haxe": "haxe",
     "neko": "neko",
     "postinstall": "lix download",

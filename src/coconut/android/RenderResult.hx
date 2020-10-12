@@ -8,6 +8,7 @@ import haxe.ds.Either;
 
 // typedef RenderResult = coconut.diffing.VNode<Dynamic>;
 @:pure
+@:keepSub
 abstract RenderResult(VNode<AndroidView>) to VNode<AndroidView> from VNode<AndroidView> {
 	inline function new(n) {
 		this = n;

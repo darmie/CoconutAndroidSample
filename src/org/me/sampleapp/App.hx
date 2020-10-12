@@ -19,14 +19,15 @@ import tink.state.*;
 import coconut.ui.*;
 import tink.core.*;
 
+@:keepSub
 class Text extends View {
-	@:attribute var children:String;
+	@:keep @:attribute var children:String;
 
-	function render() <TextView text={[children]} />;
+	function render() '<TextView text={[children]} />';
 }
 
+@:keepSub
 class App extends View implements View_OnClickListener {
-	// @:attribute var gravity:Int = Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL;
 	@:ref var btn:Button;
 	var counter:Int = 0;
 	@:state var counterString:String = '$counter';
@@ -34,25 +35,24 @@ class App extends View implements View_OnClickListener {
 	@:ref var mainLayout:LinearLayout;
 
 	@:keep public function onClick(v:android.view.View) {
-		// trace("Button Trigger!!!");
 		counter++;
 		btn.setText('${counter}');
 		counterString = '${counter}';
 	}
 
 	function render()
-				<LinearLayout ref=${mainLayout} layoutParams={[new ViewGroup_LayoutParams(ViewGroup_LayoutParams.MATCH_PARENT, ViewGroup_LayoutParams.MATCH_PARENT)]} orientation={[LinearLayout.VERTICAL]}  gravity={[Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL]}>
+				'<LinearLayout ref=${mainLayout} layoutParams={[new ViewGroup_LayoutParams(ViewGroup_LayoutParams.MATCH_PARENT, ViewGroup_LayoutParams.MATCH_PARENT)]} orientation={[LinearLayout.VERTICAL]}  gravity={[Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL]}>
 					<Button 
 						ref=${btn}
-						backgroundTintList={[ColorStateList.valueOf(0xFFFF0000)]} 
-						cornerRadius={[40]}
-						textColor={[Color.parseColor("#ffffff")]} 
+						backgroundTintList={[ColorStateList.valueOf(Color.parseColor("#20B2AA"))]} 
+						cornerRadius={[400]}
+						textColor={[Color.parseColor("#f3f3f3")]} 
 						text={["Click Me!"]}  
 						layoutParams={[new ViewGroup_LayoutParams(400, 400)]}
 						elevation={[50.0]}
 						onClickListener={[this]}
 					/>
 					<Text>${counterString}</Text>
-				</LinearLayout>
+				</LinearLayout>'
 		;
 }
